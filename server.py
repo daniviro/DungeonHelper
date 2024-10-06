@@ -80,12 +80,12 @@ async def crear_partida(interaction: discord.Interaction, master: discord.Member
             if mensaje.mentions:
                 jugador = mensaje.mentions[0]
                 jugadores.append(jugador)
-                await interaction.response.send_message(f'Jugador {jugador.mention} añadido.', delete_after=5, ephemeral=True)
+                await interaction.followup.send(f'Jugador {jugador.mention} añadido.', ephemeral=True)
             else:
-                await interaction.response.send_message('Por favor, menciona a un usuario válido.', delete_after=5, ephemeral=True)
+                await interaction.followup.send('Por favor, menciona a un usuario válido.', ephemeral=True)
 
         except asyncio.TimeoutError:
-            await interaction.response.send_message('Tiempo agotado. Operación cancelada.', ephemeral=True)
+            await interaction.followup.send('Tiempo agotado. Operación cancelada.', ephemeral=True)
             return
 
     # Crear la categoría
