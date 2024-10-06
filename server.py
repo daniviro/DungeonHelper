@@ -107,7 +107,7 @@ async def crear_partida(interaction: discord.Interaction, master: discord.Member
     canal_voz = await guild.create_voice_channel(f"voz-{master.name}", category=categoria)
 
     # Responder para confirmar la creación
-    await interaction.response.send_message(f'Categoría y canales creados para la partida "{nombre_categoria}".', ephemeral=True)
+    await interaction.followup.send(f'Categoría y canales creados para la partida "{nombre_categoria}".', ephemeral=True)
 
 # Crear un comando slash para eliminar una categoría y sus canales
 @bot.tree.command(name="eliminar_partida", description="Elimina una partida y todos sus canales.")
@@ -134,9 +134,9 @@ async def eliminar_partida(interaction: discord.Interaction, *, nombre: str):
         # Eliminar la categoría
         await categoria.delete()
 
-        await interaction.response.send_message(f'La partida "{categoria.name}" y todos sus canales han sido eliminados.', ephemeral=True)
+        await interaction.followup.send(f'La partida "{categoria.name}" y todos sus canales han sido eliminados.', ephemeral=True)
     else:
-        await interaction.response.send_message(f'No se encontró ninguna partida de partida que coincida con "{nombre}".', ephemeral=True)
+        await interaction.followup.send(f'No se encontró ninguna partida de partida que coincida con "{nombre}".', ephemeral=True)
 
 # Iniciar el bot con el token
 bot.run(os.getenv('DISCORD_TOKEN'))
