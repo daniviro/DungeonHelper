@@ -112,7 +112,7 @@ async def crear_partida(interaction: discord.Interaction, master: discord.Member
 @bot.tree.command(name="eliminar_partida", description="Elimina una partida y todos sus canales.")
 @app_commands.check(is_admin)
 async def eliminar_partida(interaction: discord.Interaction, *, nombre: str):
-    guild = ctx.guild  # Servidor actual
+    guild = interaction.guild  # Servidor actual
 
     # Buscar la categoría que comience con "Sala de partida | "
     nombre_categoria = f"Sala de partida | {nombre}"
