@@ -134,9 +134,9 @@ async def eliminar_partida(interaction: discord.Interaction, *, nombre: str):
         # Eliminar la categoría
         await categoria.delete()
 
-        await interaction.followup.send(f'La partida "{categoria.name}" y todos sus canales han sido eliminados.', ephemeral=True)
+        await interaction.response.send_message(f'La partida "{categoria.name}" y todos sus canales han sido eliminados.', ephemeral=True)
     else:
-        await interaction.followup.send(f'No se encontró ninguna partida de partida que coincida con "{nombre}".', ephemeral=True)
+        await interaction.response.send_message(f'No se encontró ninguna partida de partida que coincida con "{nombre}".', ephemeral=True)
 
 # Iniciar el bot con el token
 bot.run(os.getenv('DISCORD_TOKEN'))
