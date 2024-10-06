@@ -30,8 +30,37 @@ async def hola(interaction: discord.Interaction):
 
 # Crear un comando slash
 @bot.tree.command(name="crear_partida", description="Crea una categoría y canales para una partida de rol.")
-async def crear_partida(interaction: discord.Interaction, master: discord.Member, jugadores: app_commands.Greedy[discord.Member]):
+async def crear_partida(interaction: discord.Interaction, master: discord.Member):
     guild = interaction.guild  # Servidor actual
+    await interaction.response.send_message("Por favor, menciona a los jugadores uno por uno. Escribe `done` cuando hayas terminado.", ephemeral=True)
+
+    # Lista para almacenar los jugadores
+    jugadores = []
+
+    def check(m):
+        return m.author == interaction.user and m.channel == interaction.channel
+
+    # Iniciar la recolección de jugadores
+    while True:
+        try:
+            # Esperar la respuesta del usuario
+            mensaje = await bot.wait_for('message', check=check, timeout=60)  # Timeout de 60 segundos
+
+            # Verificar si el mensaje es "done"
+            if mensaje.content.lower() == 'done':
+                break
+
+            # Obtener el usuario mencionado
+            if mensaje.mentions:
+                jugador = mensaje.mentions[0]
+                jugadores.append(jugador)
+                await interaction.followup.send(f'Jugador {jugador.mention} añadido.', ephemeral=True)
+            else:
+                await interaction.followup.send('Por favor, menciona a un usuario válido.', ephemeral=True)
+
+        except asyncio.TimeoutError:
+            await interaction.followup.send('Tiempo agotado. Operación cancelada.', ephemeral=True)
+            return
 
     # Crear la categoría
     categoria = await guild.create_category(
@@ -52,10 +81,11 @@ async def crear_partida(interaction: discord.Interaction, master: discord.Member
     canal_voz = await guild.create_voice_channel(f"voz-{master.name}", category=categoria)
 
     # Responder al comando para confirmar la creación
-    await interaction.response.send_message(
+    await interaction.followup.send(
         f'Categoría y canales creados para la partida de {master.name}.',
         ephemeral=True  # Solo visible para la persona que ejecutó el comando
     )
+
 
 # Iniciar el bot con el token
 bot.run(os.getenv('DISCORD_TOKEN'))
