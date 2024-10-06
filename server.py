@@ -28,10 +28,14 @@ async def on_ready():
 async def hola(interaction: discord.Interaction):
     await interaction.response.send_message('¡Hola! Soy un bot de Discord.')
 
-# Crear un comando slash
+# Crear un comando slash para crear partidas
 @bot.tree.command(name="crear_partida", description="Crea una categoría y canales para una partida de rol.")
-async def crear_partida(interaction: discord.Interaction, master: discord.Member):
+async def crear_partida(interaction: discord.Interaction, master: discord.Member, nombre: str = None):
     guild = interaction.guild  # Servidor actual
+
+    # Establecer el nombre de la categoría
+    nombre_categoria = nombre if nombre else f"Partida de {master.name}"
+
     await interaction.response.send_message("Por favor, menciona a los jugadores uno por uno. Escribe `done` cuando hayas terminado.", ephemeral=True)
 
     # Lista para almacenar los jugadores
@@ -67,7 +71,7 @@ async def crear_partida(interaction: discord.Interaction, master: discord.Member
 
     # Crear la categoría
     categoria = await guild.create_category(
-        name=f"Partida de {master.name}",
+        name=nombre_categoria,
         overwrites={
             guild.default_role: discord.PermissionOverwrite(view_channel=False),  # Todos los demás no pueden ver
             guild.get_role(ADMIN_ROLE_ID): discord.PermissionOverwrite(view_channel=True),  # Admins pueden ver
@@ -85,9 +89,29 @@ async def crear_partida(interaction: discord.Interaction, master: discord.Member
 
     # Responder al comando para confirmar la creación
     await interaction.followup.send(
-        f'Categoría y canales creados para la partida de {master.name}.',
+        f'Categoría y canales creados para la partida "{nombre_categoria}".',
         ephemeral=True  # Solo visible para la persona que ejecutó el comando
     )
+
+# Crear un comando slash para eliminar una categoría y sus canales
+@bot.tree.command(name="eliminar_partida", description="Elimina una categoría y todos sus canales.")
+async def eliminar_partida(interaction: discord.Interaction, nombre_categoria: str):
+    guild = interaction.guild  # Servidor actual
+
+    # Buscar la categoría por nombre
+    categoria = discord.utils.get(guild.categories, name=nombre_categoria)
+    
+    if categoria:
+        # Eliminar todos los canales dentro de la categoría
+        for canal in categoria.channels:
+            await canal.delete()
+
+        # Eliminar la categoría
+        await categoria.delete()
+
+        await interaction.response.send_message(f'La categoría "{nombre_categoria}" y todos sus canales han sido eliminados.', ephemeral=True)
+    else:
+        await interaction.response.send_message(f'No se encontró la categoría con el nombre "{nombre_categoria}".', ephemeral=True)
 
 # Iniciar el bot con el token
 bot.run(os.getenv('DISCORD_TOKEN'))
