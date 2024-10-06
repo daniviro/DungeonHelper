@@ -6,6 +6,7 @@ from discord import app_commands
 # Configurar los intents necesarios
 intents = discord.Intents.default()
 intents.message_content = True
+intents.guilds = True  # Necesario para trabajar con categorías y permisos
 
 # Crear una instancia del bot
 bot = commands.Bot(command_prefix="!", intents=intents)
