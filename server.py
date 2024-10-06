@@ -28,8 +28,9 @@ async def on_ready():
 async def hola(interaction: discord.Interaction):
     await interaction.response.send_message('¡Hola! Soy un bot de Discord.')
 
+# Crear un comando slash
 @bot.tree.command(name="crear_partida", description="Crea una categoría y canales para una partida de rol.")
-async def crear_partida(interaction: discord.Interaction, master: discord.Member, *jugadores: discord.Member):
+async def crear_partida(interaction: discord.Interaction, master: discord.Member, jugadores: app_commands.Greedy[discord.Member]):
     guild = interaction.guild  # Servidor actual
 
     # Crear la categoría
@@ -42,7 +43,7 @@ async def crear_partida(interaction: discord.Interaction, master: discord.Member
         }
     )
 
-    # Añadir permisos para cada jugador
+    # Añadir permisos para cada jugador mencionado
     for jugador in jugadores:
         await categoria.set_permissions(jugador, view_channel=True)
 
@@ -55,7 +56,6 @@ async def crear_partida(interaction: discord.Interaction, master: discord.Member
         f'Categoría y canales creados para la partida de {master.name}.',
         ephemeral=True  # Solo visible para la persona que ejecutó el comando
     )
-
 
 # Iniciar el bot con el token
 bot.run(os.getenv('DISCORD_TOKEN'))
