@@ -13,6 +13,10 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 
 ADMIN_ROLE_ID = 1290057105826644069
 
+# Check para verificar si el usuario es un administrador
+def is_admin(interaction: discord.Interaction):
+    return interaction.user.guild_permissions.administrator
+
 # Evento cuando el bot está listo
 @bot.event
 async def on_ready():
@@ -29,6 +33,7 @@ async def hola(interaction: discord.Interaction):
     await interaction.response.send_message('¡Hola! Soy un bot de Discord.')
 
 # Crear un comando slash para crear partidas
+@app_commands.check(is_admin)
 @bot.tree.command(name="crear_partida", description="Crea una categoría y canales para una partida de rol.")
 async def crear_partida(interaction: discord.Interaction, master: discord.Member, nombre: str = None):
     guild = interaction.guild  # Servidor actual
@@ -95,6 +100,7 @@ async def crear_partida(interaction: discord.Interaction, master: discord.Member
 
 # Crear un comando slash para eliminar una categoría y sus canales
 @bot.tree.command(name="eliminar_partida", description="Elimina una categoría y todos sus canales.")
+@app_commands.check(is_admin)
 async def eliminar_partida(interaction: discord.Interaction, nombre_categoria: str):
     guild = interaction.guild  # Servidor actual
 
