@@ -37,13 +37,13 @@ async def hola(interaction: discord.Interaction):
 # Crear un comando slash para crear partidas
 @app_commands.check(is_admin)
 @bot.tree.command(name="crear_partida", description="Crea una categoría y canales para una partida de rol.")
-async def crear_partida(ctx, master: discord.Member, *, nombre: str = None):
+async def crear_partida(interaction: discord.Interaction, master: discord.Member, *, nombre: str = None):
     guild = ctx.guild  # Servidor actual
 
     # Verificar si el master tiene el rol de "Master verificado"
     master_role = discord.utils.get(guild.roles, id=VERIFIED_MASTER_ROLE_ID)
     if master_role not in master.roles:
-        await ctx.send(f'El usuario {master.mention} no tiene el rol de "{MASTER_ROLE_NAME}".')
+        await interaction.response.send_message(f'El usuario {master.mention} no tiene el rol de "{MASTER_ROLE_NAME}".')
         return
 
     # Establecer el nombre de la categoría
@@ -51,10 +51,10 @@ async def crear_partida(ctx, master: discord.Member, *, nombre: str = None):
 
     # Comprobar si ya existe una categoría con ese nombre
     if discord.utils.get(guild.categories, name=nombre_categoria):
-        await ctx.send(f'Ya existe una partida con el nombre "{nombre_categoria}". Elige otro nombre para la partida.')
+        await interaction.response.send_message(f'Ya existe una partida con el nombre "{nombre_categoria}". Elige otro nombre para la partida.')
         return
 
-    await ctx.send("Por favor, menciona a los jugadores uno por uno. Escribe `done` cuando hayas terminado.")
+    await interaction.response.send_message("Por favor, menciona a los jugadores uno por uno. Escribe `done` cuando hayas terminado.")
 
     # Lista para almacenar los jugadores
     jugadores = []
@@ -79,12 +79,12 @@ async def crear_partida(ctx, master: discord.Member, *, nombre: str = None):
             if mensaje.mentions:
                 jugador = mensaje.mentions[0]
                 jugadores.append(jugador)
-                await ctx.send(f'Jugador {jugador.mention} añadido.', delete_after=5)
+                await interaction.response.send_message(f'Jugador {jugador.mention} añadido.', delete_after=5)
             else:
-                await ctx.send('Por favor, menciona a un usuario válido.', delete_after=5)
+                await interaction.response.send_message('Por favor, menciona a un usuario válido.', delete_after=5)
 
         except asyncio.TimeoutError:
-            await ctx.send('Tiempo agotado. Operación cancelada.')
+            await interaction.response.send_message('Tiempo agotado. Operación cancelada.')
             return
 
     # Crear la categoría
@@ -106,12 +106,12 @@ async def crear_partida(ctx, master: discord.Member, *, nombre: str = None):
     canal_voz = await guild.create_voice_channel(f"voz-{master.name}", category=categoria)
 
     # Responder para confirmar la creación
-    await ctx.send(f'Categoría y canales creados para la partida "{nombre_categoria}".')
+    await interaction.response.send_message(f'Categoría y canales creados para la partida "{nombre_categoria}".')
 
 # Crear un comando slash para eliminar una categoría y sus canales
 @bot.tree.command(name="eliminar_partida", description="Elimina una partida y todos sus canales.")
 @app_commands.check(is_admin)
-async def eliminar_partida(ctx, *, nombre: str):
+async def eliminar_partida(interaction: discord.Interaction, *, nombre: str):
     guild = ctx.guild  # Servidor actual
 
     # Buscar la categoría que comience con "Sala de partida | "
@@ -133,9 +133,9 @@ async def eliminar_partida(ctx, *, nombre: str):
         # Eliminar la categoría
         await categoria.delete()
 
-        await ctx.send(f'La partida "{categoria.name}" y todos sus canales han sido eliminados.')
+        await interaction.response.send_message(f'La partida "{categoria.name}" y todos sus canales han sido eliminados.')
     else:
-        await ctx.send(f'No se encontró ninguna partida de partida que coincida con "{nombre}".')
+        await interaction.response.send_message(f'No se encontró ninguna partida de partida que coincida con "{nombre}".')
 
 # Iniciar el bot con el token
 bot.run(os.getenv('DISCORD_TOKEN'))
