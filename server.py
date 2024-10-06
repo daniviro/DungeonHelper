@@ -46,6 +46,9 @@ async def crear_partida(interaction: discord.Interaction, master: discord.Member
             # Esperar la respuesta del usuario
             mensaje = await bot.wait_for('message', check=check, timeout=60)  # Timeout de 60 segundos
 
+            # Eliminar el mensaje para que las menciones no lleguen a los jugadores
+            await mensaje.delete()
+
             # Verificar si el mensaje es "done"
             if mensaje.content.lower() == 'done':
                 break
@@ -85,7 +88,6 @@ async def crear_partida(interaction: discord.Interaction, master: discord.Member
         f'Categoría y canales creados para la partida de {master.name}.',
         ephemeral=True  # Solo visible para la persona que ejecutó el comando
     )
-
 
 # Iniciar el bot con el token
 bot.run(os.getenv('DISCORD_TOKEN'))
