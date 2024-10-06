@@ -38,7 +38,7 @@ async def hola(interaction: discord.Interaction):
 @app_commands.check(is_admin)
 @bot.tree.command(name="crear_partida", description="Crea una categoría y canales para una partida de rol.")
 async def crear_partida(interaction: discord.Interaction, master: discord.Member, *, nombre: str = None):
-    guild = ctx.guild  # Servidor actual
+    guild = interaction.guild  # Servidor actual
 
     # Verificar si el master tiene el rol de "Master verificado"
     master_role = discord.utils.get(guild.roles, id=VERIFIED_MASTER_ROLE_ID)
