@@ -12,6 +12,8 @@ intents.guilds = True  # Necesario para trabajar con categorías y permisos
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 ADMIN_ROLE_ID = 1290057105826644069
+MASTER_ROLE_NAME = "Master verificadx"  # Nombre del rol que los "master" deben tener
+VERIFIED_MASTER_ROLE_ID = 1291161725986537542
 
 # Check para verificar si el usuario es un administrador
 def is_admin(interaction: discord.Interaction):
@@ -39,7 +41,7 @@ async def crear_partida(ctx, master: discord.Member, *, nombre: str = None):
     guild = ctx.guild  # Servidor actual
 
     # Verificar si el master tiene el rol de "Master verificado"
-    master_role = discord.utils.get(guild.roles, name=MASTER_ROLE_NAME)
+    master_role = discord.utils.get(guild.roles, id=VERIFIED_MASTER_ROLE_ID)
     if master_role not in master.roles:
         await ctx.send(f'El usuario {master.mention} no tiene el rol de "{MASTER_ROLE_NAME}".')
         return
