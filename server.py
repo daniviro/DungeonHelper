@@ -60,7 +60,7 @@ async def crear_partida(interaction: discord.Interaction, master: discord.Member
     jugadores = []
 
     def check(m):
-        return m.author == ctx.author and m.channel == ctx.channel
+        return m.author == m.author and m.channel == m.channel
 
     # Iniciar la recolección de jugadores
     while True:
